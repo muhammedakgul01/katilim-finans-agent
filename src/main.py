@@ -1,7 +1,10 @@
-from extractor import vade_bul, kar_payi_bul, urun_bul, hedef_kitle_bul
-from normalizer import normalize_vade, normalize_kar_payi
+import pandas as pd
 import json
 import os
+from extractor import vade_bul, kar_payi_bul, urun_bul, hedef_kitle_bul
+from normalizer import normalize_vade, normalize_kar_payi
+from analyzer import en_dusuk_kar_payi, en_uzun_vade
+
 
 
 def main():
@@ -10,6 +13,9 @@ def main():
 
     # src'den bir üst dizine çık (proje_klasoru), sonra data/campaign.json'a in
     dosya_yolu = os.path.join(script_dizini, "..", "data", "campaign.json")
+    dosya_yolu_csv = os.path.join(script_dizini, "..", "data", "campaigns.csv")
+
+    df = pd.read_csv(dosya_yolu_csv, encoding = "utf-8", header = 0)
 
     metin = "Yeni müşterilere özel %2,05 kâr payı ile 36 ay vadeli konut finansmanı."
 
@@ -39,7 +45,11 @@ def main():
     with open(dosya_yolu, "w", encoding="utf-8") as f:
         f.write(kampanya_json)
 
+    print("\nEn düşük kâr payı:")
+    print(en_dusuk_kar_payi(df))
 
+    print("\nEn uzun vade:")
+    print(en_uzun_vade(df))
 
 if __name__ == "__main__":
     main()
