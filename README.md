@@ -1,149 +1,207 @@
 # Katılım Finans Agent
 
-Katılım Finans Agent, katılım bankalarının finansman kampanyalarını analiz etmek amacıyla geliştirilen yapay zekâ destekli bir prototiptir.
+Katılım Finans Agent, katılım bankalarının finansman kampanyalarını toplamak, yapılandırmak ve karşılaştırmak amacıyla geliştirilen modüler bir ön değerlendirme prototipidir.
 
-Proje kapsamında banka web sayfalarından kampanya içerikleri alınmakta, kampanya metinlerinden önemli bilgiler çıkarılmakta, standartlaştırılmakta ve analiz edilmektedir.
-
-> Bu proje TEKNOFEST 2026 Yapay Zekâ Yarışması ön değerlendirme prototipi olarak geliştirilmektedir.
+Proje, TEKNOFEST 2026 kapsamında hazırlanmıştır.
 
 ---
 
-# Proje Amacı
+## Proje Amacı
 
-Katılım bankalarının finansman kampanyaları farklı biçimlerde yayınlanmaktadır.
+Katılım bankalarının finansman ürünleri farklı web sayfalarında ve farklı metin biçimlerinde yayımlanmaktadır. Bu durum kullanıcıların ürünleri karşılaştırmasını zorlaştırmaktadır.
 
 Bu proje;
 
-- kampanya metinlerini otomatik olarak okumayı,
-- ürün bilgilerini çıkarmayı,
-- kâr payı ve vade bilgilerini standartlaştırmayı,
+- banka web sayfalarından içerik almayı,
+- HTML içeriğini okunabilir metne dönüştürmeyi,
+- kampanya metinlerinden temel bilgileri çıkarmayı,
+- kâr payı ve vade değerlerini standartlaştırmayı,
 - kampanyaları karşılaştırmayı
 
 amaçlamaktadır.
 
 ---
 
-# Sistem Mimarisi
+## Mevcut PoC Kapsamı
 
+Prototipte iki ayrı teknik akış doğrulanmıştır.
+
+### Web verisi alma akışı
+
+```text
+Kuveyt Türk Web Sayfası
+        │
+        ▼
+     Requests
+        │
+        ▼
+    scraper.py
+        │
+        ▼
+  BeautifulSoup
+        │
+        ▼
+ Okunabilir Metin
 ```
-Banka Web Sayfası
+
+Bu akışta gerçek bir banka web sayfasından HTML içeriği alınmakta ve okunabilir metne dönüştürülmektedir.
+
+### Bilgi çıkarımı ve analiz akışı
+
+```text
+Örnek Kampanya Metni
         │
         ▼
-   scraper.py
+   extractor.py
         │
         ▼
-BeautifulSoup
+  normalizer.py
         │
         ▼
- Temiz Metin
+   Python Dict
         │
         ▼
- extractor.py
+  campaign.json
         │
         ▼
- normalizer.py
+  campaigns.csv
         │
         ▼
- campaign.json
-        │
-        ▼
- campaigns.csv
-        │
-        ▼
- analyzer.py
+   analyzer.py
 ```
+
+Bu akışta örnek kampanya metinlerinden ürün, kâr payı, vade ve hedef kitle bilgileri çıkarılmakta; veriler standartlaştırılarak JSON ve CSV formatlarında işlenmektedir.
+
+> Gerçek web sayfasından alınan temiz metin ile bilgi çıkarımı modüllerinin tam uçtan uca entegrasyonu henüz tamamlanmamıştır. Bu entegrasyon sonraki geliştirme aşaması olarak planlanmaktadır.
 
 ---
 
-# Proje Yapısı
+## Proje Yapısı
 
-```
+```text
 katilim-finans-agent/
 
 ├── src/
 │   ├── main.py
+│   ├── scraper.py
 │   ├── extractor.py
 │   ├── normalizer.py
-│   ├── analyzer.py
-│   └── scraper.py
+│   └── analyzer.py
 │
 ├── data/
 │   ├── campaign.json
 │   └── campaigns.csv
 │
-├── docs/
-│
 ├── sandbox/
+│   ├── regex_01.py
+│   ├── pandas_01.py
+│   ├── requests_01.py
+│   └── beautifulsoup_01.py
 │
+├── docs/
 ├── tests/
-│
 ├── requirements.txt
-│
+├── .gitignore
 └── README.md
 ```
 
+`sandbox/` klasörü, proje geliştirme sürecinde kullanılan deneysel çalışmalar ve kütüphane denemelerini içerir.
+
 ---
 
-# Kullanılan Teknolojiler
+## Kullanılan Teknolojiler
 
 - Python 3.13
-- Regular Expressions (Regex)
+- Regular Expressions
 - JSON
+- Pandas
 - Requests
 - BeautifulSoup4
-- Pandas
 - Git
 - GitHub
 
 ---
 
-# Çalışma Akışı
+## Modüller
 
-1. Banka web sayfası alınır.
-2. HTML içeriği çekilir.
-3. HTML temiz metne dönüştürülür.
-4. Kampanya bilgileri Regex ile çıkarılır.
-5. Veriler normalize edilir.
-6. JSON çıktısı oluşturulur.
-7. Kampanyalar CSV üzerinde analiz edilir.
+### `scraper.py`
 
----
+- Web sayfasına HTTP GET isteği gönderir.
+- İstek hatalarını yakalar.
+- HTML içeriğini okunabilir metne dönüştürür.
 
-# Mevcut Özellikler
+### `extractor.py`
 
-- Web sayfası çekme
-- HTML temizleme
-- Kâr payı çıkarma
-- Vade çıkarma
-- Ürün tespiti
-- Hedef kitle tespiti
-- Veri standardizasyonu
-- JSON çıktısı oluşturma
-- Kampanya karşılaştırma analizi
+Kampanya metninden şu bilgileri çıkarır:
 
----
+- Kâr payı
+- Vade
+- Ürün
+- Hedef kitle
 
-# Kurulum
+### `normalizer.py`
 
-Projeyi klonlayın.
+Çıkarılan ham değerleri standart biçime dönüştürür.
 
-```bash
-git clone <repo-url>
+```text
+%2,05 → 2.05
+36 ay → 36
 ```
 
-Proje klasörüne girin.
+### `analyzer.py`
+
+CSV verileri üzerinde karşılaştırma yapar.
+
+Mevcut analizler:
+
+- En düşük kâr payına sahip banka
+- En uzun vadeye sahip banka
+
+### `main.py`
+
+Modülleri çağırır, JSON çıktısını üretir ve analiz sonuçlarını gösterir.
+
+---
+
+## Kurulum
+
+Projeyi klonlayın:
+
+```bash
+git clone https://github.com/muhammedakgul01/katilim-finans-agent.git
+```
+
+Proje klasörüne geçin:
 
 ```bash
 cd katilim-finans-agent
 ```
 
-Gerekli paketleri yükleyin.
+Sanal ortam oluşturun:
 
 ```bash
-pip install -r requirements.txt
+python -m venv .venv
 ```
 
-Projeyi çalıştırın.
+macOS veya Linux üzerinde sanal ortamı etkinleştirin:
+
+```bash
+source .venv/bin/activate
+```
+
+Windows üzerinde etkinleştirin:
+
+```powershell
+.venv\Scripts\activate
+```
+
+Gerekli paketleri yükleyin:
+
+```bash
+python -m pip install -r requirements.txt
+```
+
+Projeyi çalıştırın:
 
 ```bash
 python src/main.py
@@ -151,7 +209,7 @@ python src/main.py
 
 ---
 
-# Örnek JSON Çıktısı
+## Örnek JSON Çıktısı
 
 ```json
 {
@@ -165,26 +223,53 @@ python src/main.py
 
 ---
 
-# Geliştirme Durumu
+## Örnek Analiz Çıktısı
 
-✅ Regex tabanlı bilgi çıkarımı
+```text
+Kuveyt Türk sayfası başarıyla çekildi.
+HTML uzunluğu: ...
 
-✅ Veri standardizasyonu
+Konut Finansmanı metinde var mı?: True
 
-✅ JSON çıktısı
+En düşük kâr payı:
+{'bank': 'Kuveyt Türk', 'profit_rate': 2.05}
 
-✅ CSV analizi
+En uzun vade:
+{'bank': 'Albaraka Türk', 'term': 48}
+```
 
-✅ Web sayfası çekme
-
-✅ HTML temizleme
-
-🚧 Gerçek zamanlı çoklu banka entegrasyonu
-
-🚧 Gelişmiş kampanya karşılaştırmaları
+CSV dosyasındaki değerler prototip amaçlı örnek verilerdir ve güncel banka teklifi olarak değerlendirilmemelidir.
 
 ---
 
-# Takım
+## Tamamlanan Özellikler
 
-TEKNOFEST 2026 Yapay Zekâ Yarışması kapsamında geliştirilmektedir.
+- Web sayfasından HTML çekme
+- HTTP hata kontrolü
+- HTML içeriğini okunabilir metne dönüştürme
+- Regex tabanlı bilgi çıkarımı
+- Ürün ve hedef kitle tespiti
+- Kâr payı ve vade standardizasyonu
+- JSON çıktısı oluşturma
+- CSV verisi okuma
+- Kampanya karşılaştırma analizi
+- Git ve GitHub tabanlı sürüm kontrolü
+
+---
+
+## Gelecek Çalışmalar
+
+- Gerçek web metni ile extractor modülünün uçtan uca entegrasyonu
+- Birden fazla katılım bankasının sisteme eklenmesi
+- Siteye özel içerik seçicilerin geliştirilmesi
+- Dinamik web sayfaları için alternatif veri toplama yöntemleri
+- Daha fazla ürün ve hedef kitle sınıfının desteklenmesi
+- Gelişmiş karşılaştırma ve öneri mekanizması
+- Otomatik testlerin eklenmesi
+- Yapay zekâ ve doğal dil işleme modelleriyle esnek bilgi çıkarımı
+
+---
+
+## Takım
+
+Bu proje, TEKNOFEST 2026 ön değerlendirme süreci kapsamında iki kişilik takım tarafından geliştirilmektedir.

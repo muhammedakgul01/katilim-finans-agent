@@ -8,6 +8,7 @@ response.raise_for_status()
 
 soup = BeautifulSoup(response.text, "html.parser")
 
+
 # Durum kodu
 print("Durum kodu: ", response.status_code)
 
@@ -21,3 +22,7 @@ print(temiz_metin[:1000])
 
 
 print("Konut Finansmanı" in temiz_metin)
+
+index = temiz_metin.find("Konut Finansmanı")
+print("Index: ", index)
+print(temiz_metin[index:index + 1000])
