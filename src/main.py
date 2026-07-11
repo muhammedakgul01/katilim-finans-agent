@@ -4,7 +4,7 @@ import os
 from extractor import vade_bul, kar_payi_bul, urun_bul, hedef_kitle_bul
 from normalizer import normalize_vade, normalize_kar_payi
 from analyzer import en_dusuk_kar_payi, en_uzun_vade
-from scraper import sayfa_cek
+from scraper import sayfa_cek, html_metin_ayikla
 
 
 
@@ -12,8 +12,10 @@ def main():
     # main.py'nin bulunduğu klasör (src)
     script_dizini = os.path.dirname(os.path.abspath(__file__))
 
-    # src'den bir üst dizine çık (proje_klasoru), sonra data/campaign.json'a in
+    # JSON çıktı dosyasının yolu
     dosya_yolu = os.path.join(script_dizini, "..", "data", "campaign.json")
+
+    # CSV analiz dosyasının yolu
     dosya_yolu_csv = os.path.join(script_dizini, "..", "data", "campaigns.csv")
 
     df = pd.read_csv(dosya_yolu_csv, encoding = "utf-8", header = 0)
@@ -25,6 +27,10 @@ def main():
     if html is not None:
         print("Kuveyt Türk sayfası başarıyla çekildi.")
         print(f"HTML uzunluğu: {len(html)}")
+
+        temiz_metin = html_metin_ayikla(html)
+        print(f"Temiz metin uzunluğu: {len(temiz_metin)}")
+        print("Konut Finansmanı metinde var mı?:", "Konut Finansmanı" in temiz_metin)
     else:
         print("Kuveyt Türk sayfası çekilemedi")
 
