@@ -4,6 +4,7 @@ import os
 from extractor import vade_bul, kar_payi_bul, urun_bul, hedef_kitle_bul
 from normalizer import normalize_vade, normalize_kar_payi
 from analyzer import en_dusuk_kar_payi, en_uzun_vade
+from scraper import sayfa_cek
 
 
 
@@ -16,6 +17,17 @@ def main():
     dosya_yolu_csv = os.path.join(script_dizini, "..", "data", "campaigns.csv")
 
     df = pd.read_csv(dosya_yolu_csv, encoding = "utf-8", header = 0)
+
+    kuveyt_turk_url = "https://www.kuveytturk.com.tr/kendim-icin/finansmanlar/konut-finansmanlari/konut-finansmani"
+
+    html = sayfa_cek(kuveyt_turk_url)
+
+    if html is not None:
+        print("Kuveyt Türk sayfası başarıyla çekildi.")
+        print(f"HTML uzunluğu: {len(html)}")
+    else:
+        print("Kuveyt Türk sayfası çekilemedi")
+
 
     metin = "Yeni müşterilere özel %2,05 kâr payı ile 36 ay vadeli konut finansmanı."
 
