@@ -266,7 +266,9 @@ CSV dosyasındaki değerler prototip amaçlı örnek verilerdir ve güncel banka
 - Daha fazla ürün ve hedef kitle sınıfının desteklenmesi
 - Gelişmiş karşılaştırma ve öneri mekanizması
 - Otomatik testlerin eklenmesi
-- Yapay zekâ ve doğal dil işleme modelleriyle esnek bilgi çıkarımı
+- Yapay zekâ destekli chatbot geliştirilmesi
+- Kullanıcının doğal dilde sorduğu finansman sorularını anlayabilen bir AI Agent geliştirilmesi
+- LLM tabanlı kampanya öneri ve karşılaştırma sistemi geliştirilmesi
 
 ---
 
